@@ -6,7 +6,7 @@
 
 `vue-active-preview` 是一个面向移动端、无依赖、轻量级的 `vue`放大预览组件(`image gallery`)
 
-![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/preview-1.gif)
+![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/preview_1.gif)
 
 [English](https://github.com/accforgit/vue-active-preview/blob/master/README_US.md) | 简体中文
 
