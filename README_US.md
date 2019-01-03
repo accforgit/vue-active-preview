@@ -1,4 +1,4 @@
-# vue-active-swiper
+# vue-active-preview
 
 ![NPM](https://nodei.co/npm/vue-active-preview.png?downloads=true&downloadRank=true&stars=true)
 
