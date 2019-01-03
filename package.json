@@ -1,11 +1,37 @@
 {
   "name": "vue-active-preview",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "kother1",
+    "email": "kother@foxmail.com",
+    "url": "https://github.com/accforgit"
+  },
+  "bugs": {
+    "url": "https://github.com/accforgit/vue-active-preview/issues"
+  },
+  "description": "A PhotoSwipe Image Preview component for Vue",
+  "main": "dist/VueActivePreview.umd.min.js",
+  "keywords": [
+    "vue-active-preview",
+    "vue active preview",
+    "photoSwipe", 
+    "preview",
+    "carousel",
+    "vue-photoSwipe",
+    "vue-preview",
+    "vue carousel"
+  ],
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "lib": "vue-cli-service build --target lib --name VueActivePreview src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/accforgit/vue-active-preview.git"
   },
   "dependencies": {
     "vue": "^2.5.21"
