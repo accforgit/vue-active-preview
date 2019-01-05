@@ -40,33 +40,36 @@ let figureType = 0
 
 // 单指操作 - 滑动坐标相关，即 figureType = 1
 // touchStart 点击坐标
-const singleStartX = 0
+let singleStartX = 0
 // 上个周期中的tranlateX 坐标
-const singlePrevX = 0
+let singlePrevX = 0
 // 当前是否需要自动滑动到下一张图片
-const singleAutoNext = false
+let singleAutoNext = false
 // 滑动的方向，true为右滑，false为左滑
-const singleDirectionFlag = false
+let singleDirectionFlag = false
 
 // 双指缩放操作 - 滑动坐标相关，即 figureType = 2
 // 缩放起始双指间的间距
-const doubleStartDistance = 0
+let doubleStartDistance = 0
 // 最大放大倍数
-const doubleStartMaxScaleWidth = 0
+let doubleStartMaxScaleWidth = 0
 
 // 双指缩放后进行单指滑动查看缩放后的图片 ，即 figureType = 3
-const doubleSingleStartX = 0
-const doubleSingleStartY = 0
-const doubleSinglePrevX = 0
-const doubleSinglePrevY = 0
-const doubleSingleLastClientX = 0
-const doubleSingleLastClientY = 0
+let doubleSingleStartX = 0
+let doubleSingleStartY = 0
+let doubleSinglePrevX = 0
+let doubleSinglePrevY = 0
+let doubleSingleLastClientX = 0
+let doubleSingleLastClientY = 0
+let doubleSingleSpeedX = 0
+let doubleSingleSpeedY = 0
+let doubleSingleExceedBoundary = false
 
 // 用于辅助判断是否是双击/单击/长按事件
-const eventTimeStamp = 0
-const eventStartX = 0
-const eventStartY = 0
-const eventIsDoubleTap = 0
+let eventTimeStamp = 0
+let eventStartX = 0
+let eventStartY = 0
+let eventIsDoubleTap = 0
 
 // 当前正在预览的图片次序，用于位置计算
 let activeIndex = 0
@@ -74,7 +77,7 @@ let criticalWidth = 0
 // 用于取消自动轮播（如果指定了的话）
 let autoPlayTimer = null
 // previewWrapper上的触摸点数量
-let touchCount = 0
+let touchCount = 0;
 
 // 兼容性相关
 const raf = window.requestAnimationFrame
@@ -242,7 +245,7 @@ export default {
       }
       const touch0 = e.touches[0]
       if (touchCount === 1) {
-        if (this.currentW === clientW || doubleSingleTransferInfo.exceedBoundary) {
+        if (this.currentW === clientW || doubleSingleExceedBoundary) {
           if (this.transX === fixedTransX && this.isDoubleTap(e)) {
             // 双击放大 -> 双指缩放
             figureType = 2
@@ -425,8 +428,8 @@ export default {
       const currentActiveIndex = this.getActiveIndex(activeIndex + (singleAutoNext ? singleDirectionFlag : 0))
       this.transX = singlePrevX = -clientW * currentActiveIndex
       // 双指放大后的单指滑动行为
-      if (doubleSingleTransferInfo.exceedBoundary) {
-        doubleSingleTransferInfo.exceedBoundary = false
+      if (doubleSingleExceedBoundary) {
+        doubleSingleExceedBoundary = false
         if (currentActiveIndex !== activeIndex) {
           this.left = 0
           this.top = 0
@@ -515,8 +518,8 @@ export default {
     // 双指缩放后，单指滑动查看大图行为 - move
     doubleSingleTouchMoveFn (e) {
       const touch = e.touches[0]
-      doubleSingleTransferInfo.speedX = touch.clientX - doubleSingleLastClientX
-      doubleSingleTransferInfo.speedY = touch.clientY - doubleSingleLastClientY
+      doubleSingleSpeedX = touch.clientX - doubleSingleLastClientX
+      doubleSingleSpeedY = touch.clientY - doubleSingleLastClientY
       doubleSingleLastClientX = touch.clientX
       doubleSingleLastClientY = touch.clientY
       let transX = doubleSingleLastClientX - doubleSingleStartX + doubleSinglePrevX
@@ -526,7 +529,7 @@ export default {
         if (transX + this.left > 0) {
           // 左越界
           if (this.left === 0) {
-            doubleSingleTransferInfo.exceedBoundary = true
+            doubleSingleExceedBoundary = true
             doubleSingleLastClientX = doubleSingleLastClientY= 0
             this.top = this.getLimitVerticalBoundaryTop(transY)
             singleStartX = e.touches[0].clientX
@@ -541,7 +544,7 @@ export default {
         if (transX + this.left < maxLeft) {
           // 右越界
           if (this.left === maxLeft) {
-            doubleSingleTransferInfo.exceedBoundary = true
+            doubleSingleExceedBoundary = true
             doubleSingleLastClientX = doubleSingleLastClientY= 0
             this.top = this.getLimitVerticalBoundaryTop(transY)
             singleStartX = e.touches[0].clientX
@@ -573,7 +576,7 @@ export default {
       if (doubleSingleLastClientX) {
         doubleSingleLastClientX = doubleSingleLastClientY = 0
         // 惯性滚动
-        this.frictionMove(doubleSingleTransferInfo.speedX, doubleSingleTransferInfo.speedY)
+        this.frictionMove(doubleSingleSpeedX, doubleSingleSpeedY)
       } else {
         this.fixedDoubleSingleStatus()
       }

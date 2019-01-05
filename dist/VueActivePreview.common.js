@@ -956,7 +956,7 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.function.name.js
 var es6_function_name = __webpack_require__("7f7f");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=7beb924d&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=2440bb78&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"active-preview"},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
       transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
       transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
@@ -974,12 +974,17 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=7beb924d&
+// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=2440bb78&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.number.constructor.js
 var es6_number_constructor = __webpack_require__("c5f6");
 
+// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs2/helpers/esm/readOnlyError.js
+function _readOnlyError(name) {
+  throw new Error("\"" + name + "\" is read-only");
+}
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=script&lang=js&
+
 
 //
 //
@@ -1018,41 +1023,33 @@ var clientW = document.documentElement.clientWidth;
 var clientH = document.documentElement.clientHeight; // 1：单指滑动；2：双指缩放，3：双指缩放后进行单指滑动查看缩放后的图片
 
 var figureType = 0; // 单指操作 - 滑动坐标相关，即 figureType = 1
+// touchStart 点击坐标
 
-var singleTransferInfo = {
-  // touchStart 点击坐标和时间戳
-  startX: 0,
-  startY: 0,
-  // 上个周期中的tranlateX 坐标
-  prevX: 0,
-  // 当前是否需要自动滑动到下一张图片
-  autoNext: false,
-  // 滑动的方向，true为右滑，false为左滑
-  directionFlag: true // 双指缩放操作 - 滑动坐标相关，即 figureType = 2
+var singleStartX = 0; // 上个周期中的tranlateX 坐标
 
-};
-var doubleTransferInfo = {
-  startDistance: 0,
-  maxScaleWidth: 0 // 双指缩放后进行单指滑动查看缩放后的图片 ，即 figureType = 3
+var singlePrevX = 0; // 当前是否需要自动滑动到下一张图片
 
-};
-var doubleSingleTransferInfo = {
-  // touchStart 点击坐标
-  startX: 0,
-  startY: 0,
-  prevX: 0,
-  prevY: 0,
-  lastClientX: 0,
-  lastClientY: 0 // 用于辅助判断是否是双击/单击/长按事件
+var singleAutoNext = false; // 滑动的方向，true为右滑，false为左滑
 
-};
-var touchStartInfo = {
-  timeStamp: 0,
-  startX: -1,
-  startY: -1,
-  isDoubleTap: false // 当前正在预览的图片次序，用于位置计算
+var singleDirectionFlag = false; // 双指缩放操作 - 滑动坐标相关，即 figureType = 2
+// 缩放起始双指间的间距
 
-};
+var doubleStartDistance = 0; // 最大放大倍数
+
+var doubleStartMaxScaleWidth = 0; // 双指缩放后进行单指滑动查看缩放后的图片 ，即 figureType = 3
+
+var doubleSingleStartX = 0;
+var doubleSingleStartY = 0;
+var doubleSinglePrevX = 0;
+var doubleSinglePrevY = 0;
+var doubleSingleLastClientX = 0;
+var doubleSingleLastClientY = 0; // 用于辅助判断是否是双击/单击/长按事件
+
+var eventTimeStamp = 0;
+var eventStartX = 0;
+var eventStartY = 0;
+var eventIsDoubleTap = 0; // 当前正在预览的图片次序，用于位置计算
+
 var activeIndex = 0;
 var criticalWidth = 0; // 用于取消自动轮播（如果指定了的话）
 
@@ -1201,12 +1198,12 @@ function noOp() {}
     if (this.previewItemCount > 1) {
       // 因为首尾都多加了一个previewItem元素，所以顺延一位
       this.activeIndex = activeIndex = this.getActiveIndex(this.startIndex + 1);
-      singleTransferInfo.prevX = -clientW * activeIndex;
+      singlePrevX = (_readOnlyError("singlePrevX"), -clientW * activeIndex);
       this.transX = -clientW * activeIndex;
     }
 
     if (typeof this.maxScaleValue === 'number') {
-      doubleTransferInfo.maxScaleWidth = clientW * this.maxScaleValue;
+      doubleStartMaxScaleWidth = (_readOnlyError("doubleStartMaxScaleWidth"), clientW * this.maxScaleValue);
     }
 
     this.autoPlayFn();
@@ -1225,7 +1222,7 @@ function noOp() {}
         if (isSupportGetBoundingClientRect) {
           var rect = this.$refs.previewWrapper.getBoundingClientRect();
           this.isTransToX = false;
-          this.transX = singleTransferInfo.prevX = rect.left;
+          this.transX = singlePrevX = (_readOnlyError("singlePrevX"), rect.left);
         } else {
           figureType = 0;
           return;
@@ -1257,9 +1254,9 @@ function noOp() {}
         } // 用于判断 单击、双击、长按事件
 
 
-        touchStartInfo.timeStamp = e.timeStamp;
-        touchStartInfo.startX = touch0.clientX;
-        touchStartInfo.startY = touch0.clientY;
+        eventTimeStamp = (_readOnlyError("eventTimeStamp"), e.timeStamp);
+        eventStartX = (_readOnlyError("eventStartX"), touch0.clientX);
+        eventStartY = (_readOnlyError("eventStartY"), touch0.clientY);
       } else if (touchCount === 2) {
         if (this.transX === fixedTransX) {
           figureType = 2; // 双指缩放
@@ -1307,12 +1304,12 @@ function noOp() {}
         return;
       }
 
-      if (touchStartInfo.isDoubleTap) {
+      if (eventIsDoubleTap) {
         // 重置
-        touchStartInfo.isDoubleTap = false;
-        touchStartInfo.startX = -1;
-        touchStartInfo.startY = -1;
-        touchStartInfo.timeStamp = 0;
+        eventIsDoubleTap = (_readOnlyError("eventIsDoubleTap"), false);
+        eventStartX = (_readOnlyError("eventStartX"), -1);
+        eventStartY = (_readOnlyError("eventStartY"), -1);
+        eventTimeStamp = (_readOnlyError("eventTimeStamp"), 0);
       }
 
       if (figureType === 1) {
@@ -1330,11 +1327,11 @@ function noOp() {}
 
       if (touchCount === 1) {
         if (figureType !== 0) {
-          singleTransferInfo.startX = doubleSingleTransferInfo.startX = touches[0].clientX;
-          singleTransferInfo.prevX = this.transX;
-          doubleSingleTransferInfo.startY = touches[0].clientY;
-          doubleSingleTransferInfo.prevX = this.doubleSingleTransLeft;
-          doubleSingleTransferInfo.prevY = this.doubleSingleTransTop;
+          singleStartX = (_readOnlyError("singleStartX"), doubleSingleStartX = touches[0].clientX);
+          singlePrevX = (_readOnlyError("singlePrevX"), this.transX);
+          doubleSingleStartY = (_readOnlyError("doubleSingleStartY"), touches[0].clientY);
+          doubleSinglePrevX = (_readOnlyError("doubleSinglePrevX"), this.doubleSingleTransLeft);
+          doubleSinglePrevY = (_readOnlyError("doubleSinglePrevY"), this.doubleSingleTransTop);
 
           if (this.transX === -clientW * activeIndex) {
             if (this.currentW !== clientW) {
@@ -1355,25 +1352,25 @@ function noOp() {}
       if (this.ignoreTouch()) return; // 取消还没结束的自动轮播（如果指定了轮播的话）
 
       clearTimeout(autoPlayTimer);
-      singleTransferInfo.startX = e.touches[0].clientX;
+      singleStartX = (_readOnlyError("singleStartX"), e.touches[0].clientX);
     },
     // 单指滑动行为 - move
     singleTouchMoveFn: function singleTouchMoveFn(e) {
       if (this.ignoreTouch()) return;
 
       if (this.previewItemCount !== 1) {
-        var transX = e.touches[0].clientX - singleTransferInfo.startX + singleTransferInfo.prevX;
+        var transX = e.touches[0].clientX - singleStartX + singlePrevX;
 
         if (transX > 0) {
           // 滑动到到第一个了
-          singleTransferInfo.startX = e.touches[0].clientX; // 矫正到正确位置
+          singleStartX = (_readOnlyError("singleStartX"), e.touches[0].clientX); // 矫正到正确位置
 
-          singleTransferInfo.prevX = transX = -clientW * (this.previewItemCount - 2);
+          singlePrevX = (_readOnlyError("singlePrevX"), transX = -clientW * (this.previewItemCount - 2));
         } else if (transX < -clientW * (this.previewItemCount - 1)) {
           // 滑动到最后一个了
-          singleTransferInfo.startX = e.touches[0].clientX; // 矫正到正确位置
+          singleStartX = (_readOnlyError("singleStartX"), e.touches[0].clientX); // 矫正到正确位置
 
-          singleTransferInfo.prevX = transX = -clientW;
+          singlePrevX = (_readOnlyError("singlePrevX"), transX = -clientW);
         }
 
         this.transX = transX;
@@ -1381,7 +1378,7 @@ function noOp() {}
         // 数量为1
         if (!this.noDragWhenSingle) {
           // 允许拖动
-          this.transX = (e.touches[0].clientX - singleTransferInfo.startX) * 0.1 + singleTransferInfo.prevX;
+          this.transX = (e.touches[0].clientX - singleStartX) * 0.1 + singlePrevX;
         }
       }
     },
@@ -1416,16 +1413,16 @@ function noOp() {}
 
 
       if (diffX > 0) {
-        singleTransferInfo.directionFlag = -1;
-        singleTransferInfo.autoNext = diffX > criticalWidth;
-        toX = singleTransferInfo.autoNext ? -clientW * (activeIndex - 1) : -clientW * activeIndex;
+        singleDirectionFlag = (_readOnlyError("singleDirectionFlag"), -1);
+        singleAutoNext = (_readOnlyError("singleAutoNext"), diffX > criticalWidth);
+        toX = singleAutoNext ? -clientW * (activeIndex - 1) : -clientW * activeIndex;
       } else if (diffX < 0) {
-        singleTransferInfo.directionFlag = 1;
-        singleTransferInfo.autoNext = Math.abs(diffX) > criticalWidth;
-        toX = singleTransferInfo.autoNext ? -clientW * (activeIndex + 1) : -clientW * activeIndex;
+        singleDirectionFlag = (_readOnlyError("singleDirectionFlag"), 1);
+        singleAutoNext = (_readOnlyError("singleAutoNext"), Math.abs(diffX) > criticalWidth);
+        toX = singleAutoNext ? -clientW * (activeIndex + 1) : -clientW * activeIndex;
       } else {
-        singleTransferInfo.directionFlag = 0;
-        singleTransferInfo.autoNext = false;
+        singleDirectionFlag = (_readOnlyError("singleDirectionFlag"), 0);
+        singleAutoNext = (_readOnlyError("singleAutoNext"), false);
         toX = -clientW * activeIndex;
       }
 
@@ -1434,8 +1431,8 @@ function noOp() {}
     transEndFn: function transEndFn() {
       var _this = this;
 
-      var currentActiveIndex = this.getActiveIndex(activeIndex + (singleTransferInfo.autoNext ? singleTransferInfo.directionFlag : 0));
-      this.transX = singleTransferInfo.prevX = -clientW * currentActiveIndex; // 双指放大后的单指滑动行为
+      var currentActiveIndex = this.getActiveIndex(activeIndex + (singleAutoNext ? singleDirectionFlag : 0));
+      this.transX = singlePrevX = (_readOnlyError("singlePrevX"), -clientW * currentActiveIndex); // 双指放大后的单指滑动行为
 
       if (doubleSingleTransferInfo.exceedBoundary) {
         doubleSingleTransferInfo.exceedBoundary = false;
@@ -1464,12 +1461,12 @@ function noOp() {}
       this.transOriginX = (targetTouch1.clientX + targetTouch2.clientX) / 2 - this.left;
       this.transOriginY = (targetTouch1.clientY + targetTouch2.clientY) / 2 - this.top; // 获取开始时两指间距离
 
-      doubleTransferInfo.startDistance = this.getDistance(targetTouch1, targetTouch2);
+      doubleStartDistance = (_readOnlyError("doubleStartDistance"), this.getDistance(targetTouch1, targetTouch2));
     },
     // 双指缩放行为 - move
     doubleTouchMoveFn: function doubleTouchMoveFn(e) {
       // 得到本次两指间的距离和上次两指间的距离比例，即为缩放比例
-      this.scaleValue = this.getDistance(e.touches[0], e.touches[1]) / doubleTransferInfo.startDistance;
+      this.scaleValue = this.getDistance(e.touches[0], e.touches[1]) / doubleStartDistance;
     },
     // 双指缩放行为 - end
     doubleTouchEndFn: function doubleTouchEndFn() {
@@ -1479,8 +1476,8 @@ function noOp() {}
       var currentW = scaleValue * this.currentW;
       var currentH = 0; // 超出最大放大倍数了，需回退到最大倍数的状态
 
-      if (doubleTransferInfo.maxScaleWidth !== 0 && currentW > doubleTransferInfo.maxScaleWidth) {
-        currentW = doubleTransferInfo.maxScaleWidth; // 重新计算本次 scaleValue
+      if (doubleStartMaxScaleWidth !== 0 && currentW > doubleStartMaxScaleWidth) {
+        currentW = doubleStartMaxScaleWidth; // 重新计算本次 scaleValue
 
         scaleValue = currentW / this.currentW;
       } // 如果缩放比例小于1，则恢复到1
@@ -1528,27 +1525,27 @@ function noOp() {}
         this.fixedDoubleSingleStatus();
       }
 
-      doubleSingleTransferInfo.startX = e.touches[0].clientX;
-      doubleSingleTransferInfo.startY = e.touches[0].clientY;
+      doubleSingleStartX = (_readOnlyError("doubleSingleStartX"), e.touches[0].clientX);
+      doubleSingleStartY = (_readOnlyError("doubleSingleStartY"), e.touches[0].clientY);
     },
     // 双指缩放后，单指滑动查看大图行为 - move
     doubleSingleTouchMoveFn: function doubleSingleTouchMoveFn(e) {
       var touch = e.touches[0];
-      doubleSingleTransferInfo.speedX = touch.clientX - doubleSingleTransferInfo.lastClientX;
-      doubleSingleTransferInfo.speedY = touch.clientY - doubleSingleTransferInfo.lastClientY;
-      doubleSingleTransferInfo.lastClientX = touch.clientX;
-      doubleSingleTransferInfo.lastClientY = touch.clientY;
-      var transX = doubleSingleTransferInfo.lastClientX - doubleSingleTransferInfo.startX + doubleSingleTransferInfo.prevX;
-      var transY = doubleSingleTransferInfo.lastClientY - doubleSingleTransferInfo.startY + doubleSingleTransferInfo.prevY; // 滚动到边界的情况
+      doubleSingleTransferInfo.speedX = touch.clientX - doubleSingleLastClientX;
+      doubleSingleTransferInfo.speedY = touch.clientY - doubleSingleLastClientY;
+      doubleSingleLastClientX = (_readOnlyError("doubleSingleLastClientX"), touch.clientX);
+      doubleSingleLastClientY = (_readOnlyError("doubleSingleLastClientY"), touch.clientY);
+      var transX = doubleSingleLastClientX - doubleSingleStartX + doubleSinglePrevX;
+      var transY = doubleSingleLastClientY - doubleSingleStartY + doubleSinglePrevY; // 滚动到边界的情况
 
       if (transX > 0) {
         if (transX + this.left > 0) {
           // 左越界
           if (this.left === 0) {
             doubleSingleTransferInfo.exceedBoundary = true;
-            doubleSingleTransferInfo.lastClientX = doubleSingleTransferInfo.lastClientY = 0;
+            doubleSingleLastClientX = (_readOnlyError("doubleSingleLastClientX"), doubleSingleLastClientY = 0);
             this.top = this.getLimitVerticalBoundaryTop(transY);
-            singleTransferInfo.startX = e.touches[0].clientX;
+            singleStartX = (_readOnlyError("singleStartX"), e.touches[0].clientX);
             figureType = 1;
             transX = transY = 0;
           } else {
@@ -1562,9 +1559,9 @@ function noOp() {}
           // 右越界
           if (this.left === maxLeft) {
             doubleSingleTransferInfo.exceedBoundary = true;
-            doubleSingleTransferInfo.lastClientX = doubleSingleTransferInfo.lastClientY = 0;
+            doubleSingleLastClientX = (_readOnlyError("doubleSingleLastClientX"), doubleSingleLastClientY = 0);
             this.top = this.getLimitVerticalBoundaryTop(transY);
-            singleTransferInfo.startX = e.touches[0].clientX;
+            singleStartX = (_readOnlyError("singleStartX"), e.touches[0].clientX);
             figureType = 1;
             transX = transY = 0;
           } else {
@@ -1592,8 +1589,8 @@ function noOp() {}
     },
     // 双指缩放后，单指滑动查看大图行为 - end
     doubleSingleTouchEndFn: function doubleSingleTouchEndFn() {
-      if (doubleSingleTransferInfo.lastClientX) {
-        doubleSingleTransferInfo.lastClientX = doubleSingleTransferInfo.lastClientY = 0; // 惯性滚动
+      if (doubleSingleLastClientX) {
+        doubleSingleLastClientX = (_readOnlyError("doubleSingleLastClientX"), doubleSingleLastClientY = 0); // 惯性滚动
 
         this.frictionMove(doubleSingleTransferInfo.speedX, doubleSingleTransferInfo.speedY);
       } else {
@@ -1659,13 +1656,13 @@ function noOp() {}
       this.left = doubleSingleTransLeft + this.left;
       this.top = doubleSingleTransTop + this.top;
       this.doubleSingleTransLeft = this.doubleSingleTransTop = 0;
-      doubleSingleTransferInfo.prevX = doubleSingleTransferInfo.prevY = 0;
-      doubleSingleTransferInfo.lastClientX = doubleSingleTransferInfo.lastClientY = 0;
+      doubleSinglePrevX = (_readOnlyError("doubleSinglePrevX"), doubleSinglePrevY = 0);
+      doubleSingleLastClientX = (_readOnlyError("doubleSingleLastClientX"), doubleSingleLastClientY = 0);
     },
     // 是否是双击行为
     isDoubleTap: function isDoubleTap(e) {
-      touchStartInfo.isDoubleTap = e.timeStamp - touchStartInfo.timeStamp <= 250 && Math.abs(e.touches[0].clientX - touchStartInfo.startX) < 30 && Math.abs(e.touches[0].clientY - touchStartInfo.startY) < 30;
-      return touchStartInfo.isDoubleTap;
+      eventIsDoubleTap = (_readOnlyError("eventIsDoubleTap"), e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.touches[0].clientX - eventStartX) < 30 && Math.abs(e.touches[0].clientY - eventStartY) < 30);
+      return eventIsDoubleTap;
     },
     // 双击放大/恢复状态，enlarge：是否是放大操作
     doubleTapAction: function doubleTapAction(touch, isEnlarge) {
@@ -1726,7 +1723,7 @@ function noOp() {}
           _this3.correctDurationAct(); // 校正
 
 
-          singleTransferInfo.autoNext = false;
+          singleAutoNext = (_readOnlyError("singleAutoNext"), false);
         }, this.autoPlayDelay);
       }
     },
