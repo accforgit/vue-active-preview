@@ -226,7 +226,6 @@ export default {
   },
   methods: {
     touchstartFn (e) {
-      e.preventDefault()
       touchCount = e.touches.length
       if (this.isDoubleTapScaling) return
       // 取消自动轮播事件
@@ -290,7 +289,6 @@ export default {
       }
     },
     touchendFn (e) {
-      e.preventDefault()
       const touches = e.touches
       touchCount = touches.length
       if (this.isDoubleTapScaling) {
