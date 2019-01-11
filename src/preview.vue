@@ -1,5 +1,6 @@
 <template>
-  <div class="active-preview">
+<transition name="preview-fade" appear>
+  <div class="active-preview" @click="previewClick(activeIndex)">
     <span class="preview-counter" v-if="showCounter && previewItemCount > 1" :style="counterStyle">{{activeIndex}} / {{previewItemCount - 2}}</span>
     <div
       class="preview-wrapper"
@@ -28,6 +29,7 @@
     </div>
     <slot></slot>
   </div>
+</transition>
 </template>
 
 <script>
@@ -77,7 +79,7 @@ let criticalWidth = 0
 // 用于取消自动轮播（如果指定了的话）
 let autoPlayTimer = null
 // previewWrapper上的触摸点数量
-let touchCount = 0;
+let touchCount = 0
 
 // 兼容性相关
 const raf = window.requestAnimationFrame
@@ -95,8 +97,6 @@ const cancelRaf = window.cancelAnimationFrame
 let rafHandler = null
 
 const isSupportGetBoundingClientRect = typeof document.documentElement.getBoundingClientRect === 'function'
-
-function noOp () {}
 
 export default {
   name: 'VueActivePreview',
@@ -154,27 +154,19 @@ export default {
         return value === 0 || value >= 0
       }
     },
-    // 如果指定了此参数，并且值 >= 0，则将会将此值当做 delay的时间(单位为 ms)进行自动轮播；不指定则不自动轮播
+    // 如果指定了此参数，并且值 >= 0，则将会将此值当做 delay的时间(单位为 ms)进行自动轮播；
+    // 不指定或指定值小于 0 则不自动轮播
     // 如果想要指定此值，一般建议设置为 3000
     autoPlayDelay: {
       type: Number,
       required: false,
-      default: null,
-      validator(value) {
-        return value >= 0
-      }
+      default: null
     },
     // 如果只有一个 swipe-item，则不允许拖动
     noDragWhenSingle: {
       type: Boolean,
       required: false,
       default: true
-    },
-    // 单指操作 - 每次滚动结束后的回调
-    changeCallback: {
-      type: Function,
-      required: false,
-      default: noOp
     }
   },
   data () {
@@ -222,7 +214,12 @@ export default {
     if (typeof this.maxScaleValue === 'number') {
       doubleStartMaxScaleWidth = clientW * this.maxScaleValue
     }
-    this.autoPlayFn()
+    autoPlayTimer = setTimeout(() => {
+      this.autoPlayFn()
+    }, 14)
+  },
+  destroy () {
+    clearTimeout(autoPlayTimer)
   },
   methods: {
     touchstartFn (e) {
@@ -436,7 +433,8 @@ export default {
         }
       }
       this.activeIndex = activeIndex = currentActiveIndex
-      this.changeCallback(this.activeIndex)
+      // 单指操作 - 每次滚动结束后的回调
+      this.$emit('change', this.activeIndex)
       // setTimeout是为了避免当 autoPlayDelay值被指定为 0 时无限轮播出现问题
       // 16.7 是 1000/60 的大约值
       setTimeout(() => {
@@ -690,6 +688,7 @@ export default {
         && touchCount === 0
         && this.transX % clientW === 0
         && this.currentW === clientW) {
+        clearTimeout(autoPlayTimer)
         autoPlayTimer = setTimeout(() => {
           activeIndex = activeIndex + 1
           this.transX = -clientW * activeIndex
@@ -699,6 +698,10 @@ export default {
           singleAutoNext = false
         }, this.autoPlayDelay)
       }
+    },
+    // 整个组件的点击事件，可用于控制整个组件的显示/隐藏
+    previewClick () {
+      this.$emit('click', this.activeIndex - 1)
     },
     // 如果没有传入 preview-item子元素，或者只传入了一个子元素并且 noDragWhenSingle为 true，
     // 则不对 touch 事件进行滑动响应
@@ -755,5 +758,11 @@ export default {
   height: 100%;
   background-position: center center;
   background-repeat: no-repeat;
+}
+.preview-fade-enter-active, .preview-fade-leave-active {
+  transition: opacity .2s;
+}
+.preview-fade-enter, .preview-fade-leave-to {
+  opacity: 0;
 }
 </style>

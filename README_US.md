@@ -12,7 +12,9 @@
 
 ## Example
 
-- [Live Demo](https://accforgit.github.io/vue-active-preview/basic.html)
+- [Basic Demo](https://accforgit.github.io/vue-active-preview/basic.html)
+
+- [vue-active-preview](https://github.com/accforgit/vue-active-preview) && [vue-active-swiper](https://github.com/accforgit/vue-active-swiper) [Live Demo](https://accforgit.github.io/vue-active-preview/swiper_preview.html)
 
 ## Install
 
@@ -80,7 +82,9 @@ Work on a Vue instance:
 ]" />
 ```
 
-## Props
+## Options
+
+### Props
 
 |Option|Type|Description|Default|necessary|
 |----|---|----|----|---|
@@ -94,7 +98,13 @@ Work on a Vue instance:
 |autoPlayDelay|Number|If this parameter is specified and the value `>= 0`, the value will be taken as the time of automatic rotation `delay`(`ms`) for automatic rotation;Non-designated non-automatic rotation <br>If you want to specify this value, it is generally recommended to set it to `3000`|null|false|
 |duration|Number|The time(`ms`) required to automatically scroll to a stable position|350|false|
 |noDragWhenSingle|Boolean|If there is only one `swipeItem`, is dragging prohibited|true|false|
-|changeCallback|Function|Callback after each scroll，Callback parameter is current  `activeIndex`|-|false|
+
+### Events
+
+|Event Name|Description|params|
+|---|---|---|
+|click|Click events for the component|activeIndex|
+|change|Callback after each scroll|activeIndex|
 
 ## Extra
 

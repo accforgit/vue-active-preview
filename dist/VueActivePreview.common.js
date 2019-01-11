@@ -956,31 +956,33 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.function.name.js
 var es6_function_name = __webpack_require__("7f7f");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=03992322&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"active-preview"},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
-      transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
-      transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
-    }),on:{"touchstart":_vm.touchstartFn,"touchmove":_vm.touchmoveFn,"touchend":_vm.touchendFn,"transitionend":_vm.transitionEndFn}},_vm._l((_vm.currentList),function(item,index){return _c('div',{key:item._id,staticClass:"preview-box"},[_c('div',{staticClass:"preview-item",style:({
-        left: (index === _vm.activeIndex ? _vm.left : '0') + 'px',
-        top: (index === _vm.activeIndex ? _vm.top : '0') + 'px',
-        width: index === _vm.activeIndex ? (_vm.currentW + 'px') : '100%',
-        height: index === _vm.activeIndex ? (_vm.currentH + 'px') : '100%',
-        transform: index === _vm.activeIndex ? ("translate3d(" + _vm.doubleSingleTransLeft + "px, " + _vm.doubleSingleTransTop + "px, 0) scale(" + _vm.scaleValue + ")") : '',
-        transformOrigin: (_vm.transOriginX + "px " + _vm.transOriginY + "px"),
-        backgroundImage: ("url(" + (item.url) + ")"),
-        backgroundSize: _vm.backgroundSize,
-        transition: _vm.isDoubleTapScaling && index === _vm.activeIndex ? 'all 0.16s ease-out' : ''
-      })})])}),0),_vm._t("default")],2)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=eed85a5a&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"preview-fade","appear":""}},[_c('div',{staticClass:"active-preview",on:{"click":function($event){_vm.previewClick(_vm.activeIndex)}}},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
+        transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
+        transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
+      }),on:{"touchstart":_vm.touchstartFn,"touchmove":_vm.touchmoveFn,"touchend":_vm.touchendFn,"transitionend":_vm.transitionEndFn}},_vm._l((_vm.currentList),function(item,index){return _c('div',{key:item._id,staticClass:"preview-box"},[_c('div',{staticClass:"preview-item",style:({
+          left: (index === _vm.activeIndex ? _vm.left : '0') + 'px',
+          top: (index === _vm.activeIndex ? _vm.top : '0') + 'px',
+          width: index === _vm.activeIndex ? (_vm.currentW + 'px') : '100%',
+          height: index === _vm.activeIndex ? (_vm.currentH + 'px') : '100%',
+          transform: index === _vm.activeIndex ? ("translate3d(" + _vm.doubleSingleTransLeft + "px, " + _vm.doubleSingleTransTop + "px, 0) scale(" + _vm.scaleValue + ")") : '',
+          transformOrigin: (_vm.transOriginX + "px " + _vm.transOriginY + "px"),
+          backgroundImage: ("url(" + (item.url) + ")"),
+          backgroundSize: _vm.backgroundSize,
+          transition: _vm.isDoubleTapScaling && index === _vm.activeIndex ? 'all 0.16s ease-out' : ''
+        })})])}),0),_vm._t("default")],2)])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=03992322&
+// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=eed85a5a&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.number.constructor.js
 var es6_number_constructor = __webpack_require__("c5f6");
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=script&lang=js&
 
+//
+//
 //
 //
 //
@@ -1065,9 +1067,6 @@ var cancelRaf = window.cancelAnimationFrame || window.webkitCancelAnimationFrame
 
 var rafHandler = null;
 var isSupportGetBoundingClientRect = typeof document.documentElement.getBoundingClientRect === 'function';
-
-function noOp() {}
-
 /* harmony default export */ var previewvue_type_script_lang_js_ = ({
   name: 'VueActivePreview',
   props: {
@@ -1126,27 +1125,19 @@ function noOp() {}
         return value === 0 || value >= 0;
       }
     },
-    // 如果指定了此参数，并且值 >= 0，则将会将此值当做 delay的时间(单位为 ms)进行自动轮播；不指定则不自动轮播
+    // 如果指定了此参数，并且值 >= 0，则将会将此值当做 delay的时间(单位为 ms)进行自动轮播；
+    // 不指定或指定值小于 0 则不自动轮播
     // 如果想要指定此值，一般建议设置为 3000
     autoPlayDelay: {
       type: Number,
       required: false,
-      default: null,
-      validator: function validator(value) {
-        return value >= 0;
-      }
+      default: null
     },
     // 如果只有一个 swipe-item，则不允许拖动
     noDragWhenSingle: {
       type: Boolean,
       required: false,
       default: true
-    },
-    // 单指操作 - 每次滚动结束后的回调
-    changeCallback: {
-      type: Function,
-      required: false,
-      default: noOp
     }
   },
   data: function data() {
@@ -1179,6 +1170,8 @@ function noOp() {}
     };
   },
   created: function created() {
+    var _this = this;
+
     this.currentList = this.urlList.length > 1 ? this.urlList.slice(-1).concat(this.urlList, this.urlList.slice(0, 1)).map(function (url, index) {
       return {
         url: url,
@@ -1204,7 +1197,12 @@ function noOp() {}
       doubleStartMaxScaleWidth = clientW * this.maxScaleValue;
     }
 
-    this.autoPlayFn();
+    autoPlayTimer = setTimeout(function () {
+      _this.autoPlayFn();
+    }, 14);
+  },
+  destroy: function destroy() {
+    clearTimeout(autoPlayTimer);
   },
   methods: {
     touchstartFn: function touchstartFn(e) {
@@ -1425,7 +1423,7 @@ function noOp() {}
       return toX;
     },
     transEndFn: function transEndFn() {
-      var _this = this;
+      var _this2 = this;
 
       var currentActiveIndex = this.getActiveIndex(activeIndex + (singleAutoNext ? singleDirectionFlag : 0));
       this.transX = singlePrevX = -clientW * currentActiveIndex; // 双指放大后的单指滑动行为
@@ -1441,12 +1439,13 @@ function noOp() {}
         }
       }
 
-      this.activeIndex = activeIndex = currentActiveIndex;
-      this.changeCallback(this.activeIndex); // setTimeout是为了避免当 autoPlayDelay值被指定为 0 时无限轮播出现问题
+      this.activeIndex = activeIndex = currentActiveIndex; // 单指操作 - 每次滚动结束后的回调
+
+      this.$emit('change', this.activeIndex); // setTimeout是为了避免当 autoPlayDelay值被指定为 0 时无限轮播出现问题
       // 16.7 是 1000/60 的大约值
 
       setTimeout(function () {
-        _this.autoPlayFn();
+        _this2.autoPlayFn();
       }, 16.7);
     },
     // 双指缩放行为 - start
@@ -1606,43 +1605,43 @@ function noOp() {}
       return nextTop;
     },
     frictionMove: function frictionMove(speedX, speedY) {
-      var _this2 = this;
+      var _this3 = this;
 
       var doubleSingleTransLeft = null;
       var doubleSingleTransTop = null;
       rafHandler = raf(function () {
         speedX *= 0.9;
         speedY *= 0.9;
-        doubleSingleTransLeft = _this2.doubleSingleTransLeft + speedX;
-        doubleSingleTransTop = _this2.doubleSingleTransTop + speedY;
+        doubleSingleTransLeft = _this3.doubleSingleTransLeft + speedX;
+        doubleSingleTransTop = _this3.doubleSingleTransTop + speedY;
 
-        if (doubleSingleTransLeft + _this2.left > 0) {
-          doubleSingleTransLeft = -_this2.left;
+        if (doubleSingleTransLeft + _this3.left > 0) {
+          doubleSingleTransLeft = -_this3.left;
           speedX = 0;
-        } else if (clientW - _this2.currentW > doubleSingleTransLeft + _this2.left) {
-          doubleSingleTransLeft = clientW - _this2.currentW - _this2.left;
+        } else if (clientW - _this3.currentW > doubleSingleTransLeft + _this3.left) {
+          doubleSingleTransLeft = clientW - _this3.currentW - _this3.left;
           speedX = 0;
         }
 
-        if (doubleSingleTransTop + _this2.top > 0) {
+        if (doubleSingleTransTop + _this3.top > 0) {
           // 上边界越界
-          doubleSingleTransTop = -_this2.top;
+          doubleSingleTransTop = -_this3.top;
           speedY = 0;
-        } else if (clientH - _this2.currentH > doubleSingleTransTop + _this2.top) {
+        } else if (clientH - _this3.currentH > doubleSingleTransTop + _this3.top) {
           // 下边界越界
-          doubleSingleTransTop = clientH - _this2.currentH - _this2.top;
+          doubleSingleTransTop = clientH - _this3.currentH - _this3.top;
           speedY = 0;
         }
 
-        _this2.doubleSingleTransLeft = doubleSingleTransLeft;
-        _this2.doubleSingleTransTop = doubleSingleTransTop;
+        _this3.doubleSingleTransLeft = doubleSingleTransLeft;
+        _this3.doubleSingleTransTop = doubleSingleTransTop;
         if (Math.abs(speedX) < 1) speedX = 0;
         if (Math.abs(speedY) < 1) speedY = 0;
 
         if (speedX !== 0 || speedY !== 0) {
-          _this2.frictionMove(speedX, speedY);
+          _this3.frictionMove(speedX, speedY);
         } else {
-          _this2.fixedDoubleSingleStatus();
+          _this3.fixedDoubleSingleStatus();
         }
       });
     },
@@ -1707,21 +1706,26 @@ function noOp() {}
       }
     },
     autoPlayFn: function autoPlayFn() {
-      var _this3 = this;
+      var _this4 = this;
 
       // 判断是否满足自动轮播的条件
       if (this.previewItemCount > 1 && typeof this.autoPlayDelay === 'number' && this.autoPlayDelay >= 0 && touchCount === 0 && this.transX % clientW === 0 && this.currentW === clientW) {
+        clearTimeout(autoPlayTimer);
         autoPlayTimer = setTimeout(function () {
           activeIndex = activeIndex + 1;
-          _this3.transX = -clientW * activeIndex;
-          _this3.isTransToX = true;
+          _this4.transX = -clientW * activeIndex;
+          _this4.isTransToX = true;
 
-          _this3.correctDurationAct(); // 校正
+          _this4.correctDurationAct(); // 校正
 
 
           singleAutoNext = false;
         }, this.autoPlayDelay);
       }
+    },
+    // 整个组件的点击事件，可用于控制整个组件的显示/隐藏
+    previewClick: function previewClick() {
+      this.$emit('click', this.activeIndex - 1);
     },
     // 如果没有传入 preview-item子元素，或者只传入了一个子元素并且 noDragWhenSingle为 true，
     // 则不对 touch 事件进行滑动响应
