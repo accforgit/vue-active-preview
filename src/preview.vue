@@ -77,7 +77,7 @@ let eventIsDoubleTap = 0
 let activeIndex = 0
 let criticalWidth = 0
 // 用于取消自动轮播（如果指定了的话）
-let autoPlayTimer = null
+let _autoPlayTimer = null
 // previewWrapper上的触摸点数量
 let touchCount = 0
 
@@ -214,19 +214,20 @@ export default {
     if (typeof this.maxScaleValue === 'number') {
       doubleStartMaxScaleWidth = clientW * this.maxScaleValue
     }
-    autoPlayTimer = setTimeout(() => {
+    clearTimeout(_autoPlayTimer)
+    _autoPlayTimer = setTimeout(() => {
       this.autoPlayFn()
     }, 14)
   },
-  destroy () {
-    clearTimeout(autoPlayTimer)
+  beforeDestroy () {
+    clearTimeout(_autoPlayTimer)
   },
   methods: {
     touchstartFn (e) {
       touchCount = e.touches.length
       if (this.isDoubleTapScaling) return
       // 取消自动轮播事件
-      clearTimeout(autoPlayTimer)
+      clearTimeout(_autoPlayTimer)
       // 稳定下来后，应该的偏移位置
       const fixedTransX = -clientW * activeIndex
       if (this.isTransToX) {
@@ -349,7 +350,7 @@ export default {
     singleTouchStartFn (e) {
       if (this.ignoreTouch()) return
       // 取消还没结束的自动轮播（如果指定了轮播的话）
-      clearTimeout(autoPlayTimer)
+      clearTimeout(_autoPlayTimer)
       singleStartX = e.touches[0].clientX
     },
     // 单指滑动行为 - move
@@ -437,7 +438,8 @@ export default {
       this.$emit('change', this.activeIndex)
       // setTimeout是为了避免当 autoPlayDelay值被指定为 0 时无限轮播出现问题
       // 16.7 是 1000/60 的大约值
-      setTimeout(() => {
+      clearTimeout(_autoPlayTimer)
+      _autoPlayTimer = setTimeout(() => {
         this.autoPlayFn()
       }, 16.7)
     },
@@ -688,14 +690,14 @@ export default {
         && touchCount === 0
         && this.transX % clientW === 0
         && this.currentW === clientW) {
-        clearTimeout(autoPlayTimer)
-        autoPlayTimer = setTimeout(() => {
-          activeIndex = activeIndex + 1
-          this.transX = -clientW * activeIndex
-          this.isTransToX = true
-          this.correctDurationAct()
-          // 校正
-          singleAutoNext = false
+          clearTimeout(_autoPlayTimer)
+          _autoPlayTimer = setTimeout(() => {
+            activeIndex = activeIndex + 1
+            this.transX = -clientW * activeIndex
+            this.isTransToX = true
+            this.correctDurationAct()
+            // 校正
+            singleAutoNext = false
         }, this.autoPlayDelay)
       }
     },

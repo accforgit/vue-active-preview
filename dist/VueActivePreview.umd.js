@@ -965,7 +965,7 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.function.name.js
 var es6_function_name = __webpack_require__("7f7f");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=eed85a5a&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=558f744e&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"preview-fade","appear":""}},[_c('div',{staticClass:"active-preview",on:{"click":function($event){_vm.previewClick(_vm.activeIndex)}}},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
         transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
         transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
@@ -983,7 +983,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=eed85a5a&
+// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=558f744e&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.number.constructor.js
 var es6_number_constructor = __webpack_require__("c5f6");
@@ -1062,7 +1062,7 @@ var eventIsDoubleTap = 0; // 当前正在预览的图片次序，用于位置计
 var activeIndex = 0;
 var criticalWidth = 0; // 用于取消自动轮播（如果指定了的话）
 
-var autoPlayTimer = null; // previewWrapper上的触摸点数量
+var _autoPlayTimer = null; // previewWrapper上的触摸点数量
 
 var touchCount = 0; // 兼容性相关
 
@@ -1206,19 +1206,20 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
       doubleStartMaxScaleWidth = clientW * this.maxScaleValue;
     }
 
-    autoPlayTimer = setTimeout(function () {
+    clearTimeout(_autoPlayTimer);
+    _autoPlayTimer = setTimeout(function () {
       _this.autoPlayFn();
     }, 14);
   },
-  destroy: function destroy() {
-    clearTimeout(autoPlayTimer);
+  beforeDestroy: function beforeDestroy() {
+    clearTimeout(_autoPlayTimer);
   },
   methods: {
     touchstartFn: function touchstartFn(e) {
       touchCount = e.touches.length;
       if (this.isDoubleTapScaling) return; // 取消自动轮播事件
 
-      clearTimeout(autoPlayTimer); // 稳定下来后，应该的偏移位置
+      clearTimeout(_autoPlayTimer); // 稳定下来后，应该的偏移位置
 
       var fixedTransX = -clientW * activeIndex;
 
@@ -1354,7 +1355,7 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
     singleTouchStartFn: function singleTouchStartFn(e) {
       if (this.ignoreTouch()) return; // 取消还没结束的自动轮播（如果指定了轮播的话）
 
-      clearTimeout(autoPlayTimer);
+      clearTimeout(_autoPlayTimer);
       singleStartX = e.touches[0].clientX;
     },
     // 单指滑动行为 - move
@@ -1453,7 +1454,8 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
       this.$emit('change', this.activeIndex); // setTimeout是为了避免当 autoPlayDelay值被指定为 0 时无限轮播出现问题
       // 16.7 是 1000/60 的大约值
 
-      setTimeout(function () {
+      clearTimeout(_autoPlayTimer);
+      _autoPlayTimer = setTimeout(function () {
         _this2.autoPlayFn();
       }, 16.7);
     },
@@ -1719,8 +1721,8 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
 
       // 判断是否满足自动轮播的条件
       if (this.previewItemCount > 1 && typeof this.autoPlayDelay === 'number' && this.autoPlayDelay >= 0 && touchCount === 0 && this.transX % clientW === 0 && this.currentW === clientW) {
-        clearTimeout(autoPlayTimer);
-        autoPlayTimer = setTimeout(function () {
+        clearTimeout(_autoPlayTimer);
+        _autoPlayTimer = setTimeout(function () {
           activeIndex = activeIndex + 1;
           _this4.transX = -clientW * activeIndex;
           _this4.isTransToX = true;
