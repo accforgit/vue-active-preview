@@ -956,8 +956,8 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.function.name.js
 var es6_function_name = __webpack_require__("7f7f");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=558f744e&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"preview-fade","appear":""}},[_c('div',{staticClass:"active-preview",on:{"click":function($event){_vm.previewClick(_vm.activeIndex)}}},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=472f7ce2&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"preview-fade","appear":""}},[_c('div',{staticClass:"active-preview"},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
         transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
         transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
       }),on:{"touchstart":_vm.touchstartFn,"touchmove":_vm.touchmoveFn,"touchend":_vm.touchendFn,"transitionend":_vm.transitionEndFn}},_vm._l((_vm.currentList),function(item,index){return _c('div',{key:item._id,staticClass:"preview-box"},[_c('div',{staticClass:"preview-item",style:({
@@ -974,13 +974,14 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=558f744e&
+// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=472f7ce2&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.number.constructor.js
 var es6_number_constructor = __webpack_require__("c5f6");
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=script&lang=js&
 
+//
 //
 //
 //
@@ -1048,7 +1049,8 @@ var doubleSingleExceedBoundary = false; // 用于辅助判断是否是双击/单
 var eventTimeStamp = 0;
 var eventStartX = 0;
 var eventStartY = 0;
-var eventIsDoubleTap = 0; // 当前正在预览的图片次序，用于位置计算
+var eventTimer = null;
+var eventIsDoubleTap = false; // 当前正在预览的图片次序，用于位置计算
 
 var activeIndex = 0;
 var criticalWidth = 0; // 用于取消自动轮播（如果指定了的话）
@@ -1208,7 +1210,9 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
   methods: {
     touchstartFn: function touchstartFn(e) {
       touchCount = e.touches.length;
-      if (this.isDoubleTapScaling) return; // 取消自动轮播事件
+      if (this.isDoubleTapScaling) return;
+      eventIsDoubleTap = this.isDoubleTap(e);
+      clearTimeout(eventTimer); // 取消自动轮播事件
 
       clearTimeout(_autoPlayTimer); // 稳定下来后，应该的偏移位置
 
@@ -1229,7 +1233,7 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
 
       if (touchCount === 1) {
         if (this.currentW === clientW || doubleSingleExceedBoundary) {
-          if (this.transX === fixedTransX && this.isDoubleTap(e)) {
+          if (this.transX === fixedTransX && eventIsDoubleTap) {
             // 双击放大 -> 双指缩放
             figureType = 2;
             this.doubleTapAction(touch0, true);
@@ -1238,7 +1242,7 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
             this.singleTouchStartFn(e);
           }
         } else if (this.currentW > clientW && this.transX === fixedTransX) {
-          if (this.isDoubleTap(e)) {
+          if (eventIsDoubleTap) {
             // 双击恢复 -> 双指缩放
             figureType = 0;
             this.doubleTapAction(touch0, false);
@@ -1247,24 +1251,24 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
             figureType = 3;
             this.doubleSingleTouchStartFn(e);
           }
-        } // 用于判断 单击、双击、长按事件
-
-
-        eventTimeStamp = e.timeStamp;
-        eventStartX = touch0.clientX;
-        eventStartY = touch0.clientY;
+        }
       } else if (touchCount === 2) {
         if (this.transX === fixedTransX) {
           figureType = 2; // 双指缩放
 
           this.doubleTouchStartFn(e);
         }
-      }
+      } // 用于判断 单击、双击事件
+
+
+      eventTimeStamp = e.timeStamp;
+      eventStartX = touch0.clientX;
+      eventStartY = touch0.clientY;
     },
     touchmoveFn: function touchmoveFn(e) {
       e.preventDefault();
-      if (this.isDoubleTapScaling) return;
       var len = e.touches.length;
+      if (this.isDoubleTapScaling) return;
 
       if (figureType === 1 && len === 1) {
         this.singleTouchMoveFn(e);
@@ -1285,8 +1289,9 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
         }
 
         return;
-      } // 手机触摸数量超过 2，则忽略
+      }
 
+      this.signleTapPending(e); // 手机触摸数量超过 2，则忽略
 
       if (touchCount > 2) return;
 
@@ -1297,10 +1302,10 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
         }
 
         return;
-      }
+      } // 重置双击
+
 
       if (eventIsDoubleTap) {
-        // 重置
         eventIsDoubleTap = false;
         eventStartX = -1;
         eventStartY = -1;
@@ -1308,13 +1313,9 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
       }
 
       if (figureType === 1) {
-        if (touchCount === 0) {
-          this.singleTouchEndFn();
-        }
+        touchCount === 0 && this.singleTouchEndFn();
       } else if (figureType === 2) {
-        if (this.scaleValue !== 1) {
-          this.doubleTouchEndFn();
-        }
+        this.scaleValue !== 1 && this.doubleTouchEndFn();
       } else if (figureType === 3) {
         this.doubleSingleTouchEndFn(e);
       } // 更新状态
@@ -1329,11 +1330,7 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
           doubleSinglePrevY = this.doubleSingleTransTop;
 
           if (this.transX === -clientW * activeIndex) {
-            if (this.currentW !== clientW) {
-              figureType = 2;
-            } else {
-              figureType = 1;
-            }
+            figureType = this.currentW === clientW ? 1 : 2;
           } else {
             figureType = 1;
           }
@@ -1658,8 +1655,22 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
     },
     // 是否是双击行为
     isDoubleTap: function isDoubleTap(e) {
-      eventIsDoubleTap = e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.touches[0].clientX - eventStartX) < 30 && Math.abs(e.touches[0].clientY - eventStartY) < 30;
-      return eventIsDoubleTap;
+      return e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.touches[0].clientX - eventStartX) < 30 && Math.abs(e.touches[0].clientY - eventStartY) < 30;
+    },
+    // 判定是否是单击行为
+    signleTapPending: function signleTapPending(e) {
+      var _this4 = this;
+
+      if (e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.changedTouches[0].clientX - eventStartX) < 30 && Math.abs(e.changedTouches[0].clientY - eventStartY) < 30) {
+        // 滑动过程中的单击忽略掉
+        if (this.transX === -clientW * activeIndex) {
+          // 如果此定时器没有被双击操作 cancle掉，说明就是单击事件
+          eventTimer = setTimeout(function () {
+            // 可用于控制整个组件的显示/隐藏
+            _this4.$emit('click', _this4.activeIndex - 1);
+          }, 250);
+        }
+      }
     },
     // 双击放大/恢复状态，enlarge：是否是放大操作
     doubleTapAction: function doubleTapAction(touch, isEnlarge) {
@@ -1708,26 +1719,22 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
       }
     },
     autoPlayFn: function autoPlayFn() {
-      var _this4 = this;
+      var _this5 = this;
 
       // 判断是否满足自动轮播的条件
       if (this.previewItemCount > 1 && typeof this.autoPlayDelay === 'number' && this.autoPlayDelay >= 0 && touchCount === 0 && this.transX % clientW === 0 && this.currentW === clientW) {
         clearTimeout(_autoPlayTimer);
         _autoPlayTimer = setTimeout(function () {
           activeIndex = activeIndex + 1;
-          _this4.transX = -clientW * activeIndex;
-          _this4.isTransToX = true;
+          _this5.transX = -clientW * activeIndex;
+          _this5.isTransToX = true;
 
-          _this4.correctDurationAct(); // 校正
+          _this5.correctDurationAct(); // 校正
 
 
           singleAutoNext = false;
         }, this.autoPlayDelay);
       }
-    },
-    // 整个组件的点击事件，可用于控制整个组件的显示/隐藏
-    previewClick: function previewClick() {
-      this.$emit('click', this.activeIndex - 1);
     },
     // 如果没有传入 preview-item子元素，或者只传入了一个子元素并且 noDragWhenSingle为 true，
     // 则不对 touch 事件进行滑动响应

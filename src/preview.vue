@@ -1,6 +1,7 @@
 <template>
 <transition name="preview-fade" appear>
-  <div class="active-preview" @click="previewClick(activeIndex)">
+  <!-- <div class="active-preview" @click="previewClick(activeIndex)"> -->
+  <div class="active-preview">
     <span class="preview-counter" v-if="showCounter && previewItemCount > 1" :style="counterStyle">{{activeIndex}} / {{previewItemCount - 2}}</span>
     <div
       class="preview-wrapper"
@@ -71,7 +72,8 @@ let doubleSingleExceedBoundary = false
 let eventTimeStamp = 0
 let eventStartX = 0
 let eventStartY = 0
-let eventIsDoubleTap = 0
+let eventTimer = null
+let eventIsDoubleTap = false
 
 // 当前正在预览的图片次序，用于位置计算
 let activeIndex = 0
@@ -226,6 +228,8 @@ export default {
     touchstartFn (e) {
       touchCount = e.touches.length
       if (this.isDoubleTapScaling) return
+      eventIsDoubleTap = this.isDoubleTap(e)
+      clearTimeout(eventTimer)
       // 取消自动轮播事件
       clearTimeout(_autoPlayTimer)
       // 稳定下来后，应该的偏移位置
@@ -243,7 +247,7 @@ export default {
       const touch0 = e.touches[0]
       if (touchCount === 1) {
         if (this.currentW === clientW || doubleSingleExceedBoundary) {
-          if (this.transX === fixedTransX && this.isDoubleTap(e)) {
+          if (this.transX === fixedTransX && eventIsDoubleTap) {
             // 双击放大 -> 双指缩放
             figureType = 2
             this.doubleTapAction(touch0, true)
@@ -252,7 +256,7 @@ export default {
             this.singleTouchStartFn(e)
           }
         } else if (this.currentW > clientW && this.transX === fixedTransX) {
-          if (this.isDoubleTap(e)) {
+          if (eventIsDoubleTap) {
             // 双击恢复 -> 双指缩放
             figureType = 0
             this.doubleTapAction(touch0, false)
@@ -262,10 +266,6 @@ export default {
             this.doubleSingleTouchStartFn(e)
           }
         }
-        // 用于判断 单击、双击、长按事件
-        eventTimeStamp = e.timeStamp
-        eventStartX = touch0.clientX
-        eventStartY = touch0.clientY
       } else if (touchCount === 2) {
         if (this.transX === fixedTransX) {
           figureType = 2
@@ -273,11 +273,15 @@ export default {
           this.doubleTouchStartFn(e)
         }
       }
+      // 用于判断 单击、双击事件
+      eventTimeStamp = e.timeStamp
+      eventStartX = touch0.clientX
+      eventStartY = touch0.clientY
     },
     touchmoveFn (e) {
       e.preventDefault()
-      if (this.isDoubleTapScaling) return
       const len = e.touches.length
+      if (this.isDoubleTapScaling) return
       if (figureType === 1 && len === 1) {
         this.singleTouchMoveFn(e)
       } else if (figureType === 2 && len === 2) {
@@ -296,6 +300,7 @@ export default {
         }
         return
       }
+      this.signleTapPending(e)
       // 手机触摸数量超过 2，则忽略
       if (touchCount > 2) return
       if (touchCount === 2) {
@@ -305,8 +310,8 @@ export default {
         }
         return
       }
+      // 重置双击
       if (eventIsDoubleTap) {
-        // 重置
         eventIsDoubleTap = false
         eventStartX = -1
         eventStartY = -1
@@ -314,13 +319,9 @@ export default {
       }
       
       if (figureType === 1) {
-        if (touchCount === 0) {
-          this.singleTouchEndFn()
-        }
-      } else if (figureType === 2) {
-        if (this.scaleValue !== 1) {
-          this.doubleTouchEndFn()
-        }
+        touchCount === 0 && this.singleTouchEndFn()
+      } else if (figureType === 2) { 
+        this.scaleValue !== 1 && this.doubleTouchEndFn()
       } else if (figureType === 3) {
         this.doubleSingleTouchEndFn(e)
       }
@@ -333,11 +334,7 @@ export default {
           doubleSinglePrevX = this.doubleSingleTransLeft
           doubleSinglePrevY = this.doubleSingleTransTop
           if (this.transX === -clientW * activeIndex) {
-            if (this.currentW !== clientW) {
-              figureType = 2
-            } else {
-              figureType = 1
-            }
+            figureType = this.currentW === clientW ? 1 : 2
           } else {
             figureType = 1
           }
@@ -635,10 +632,24 @@ export default {
     },
     // 是否是双击行为
     isDoubleTap (e) {
-      eventIsDoubleTap = e.timeStamp - eventTimeStamp <= 250
+      return e.timeStamp - eventTimeStamp <= 250
         && Math.abs(e.touches[0].clientX - eventStartX) < 30
         && Math.abs(e.touches[0].clientY - eventStartY) < 30
-      return eventIsDoubleTap
+    },
+    // 判定是否是单击行为
+    signleTapPending (e) {
+      if (e.timeStamp - eventTimeStamp <= 250
+        && Math.abs(e.changedTouches[0].clientX - eventStartX) < 30
+        && Math.abs(e.changedTouches[0].clientY - eventStartY) < 30) {
+        // 滑动过程中的单击忽略掉
+        if (this.transX === -clientW * activeIndex) {
+          // 如果此定时器没有被双击操作 cancle掉，说明就是单击事件
+          eventTimer = setTimeout(() => {
+            // 可用于控制整个组件的显示/隐藏
+            this.$emit('click', this.activeIndex - 1)
+          }, 250)
+        }
+      }
     },
     // 双击放大/恢复状态，enlarge：是否是放大操作
     doubleTapAction (touch, isEnlarge) {
@@ -700,10 +711,6 @@ export default {
             singleAutoNext = false
         }, this.autoPlayDelay)
       }
-    },
-    // 整个组件的点击事件，可用于控制整个组件的显示/隐藏
-    previewClick () {
-      this.$emit('click', this.activeIndex - 1)
     },
     // 如果没有传入 preview-item子元素，或者只传入了一个子元素并且 noDragWhenSingle为 true，
     // 则不对 touch 事件进行滑动响应
