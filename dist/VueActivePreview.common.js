@@ -956,7 +956,7 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.function.name.js
 var es6_function_name = __webpack_require__("7f7f");
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=472f7ce2&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules//.cache//vue-loader","cacheIdentifier":"325c1899-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/preview.vue?vue&type=template&id=bcb97534&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('transition',{attrs:{"name":"preview-fade","appear":""}},[_c('div',{staticClass:"active-preview"},[(_vm.showCounter && _vm.previewItemCount > 1)?_c('span',{staticClass:"preview-counter",style:(_vm.counterStyle)},[_vm._v(_vm._s(_vm.activeIndex)+" / "+_vm._s(_vm.previewItemCount - 2))]):_vm._e(),_c('div',{ref:"previewWrapper",staticClass:"preview-wrapper",style:({
         transform: ("translate3d(" + _vm.transX + "px, 0, 0)"),
         transition: _vm.isTransToX ? ("transform " + _vm.duration + "ms ease-out") : ''
@@ -974,7 +974,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=472f7ce2&
+// CONCATENATED MODULE: ./src/preview.vue?vue&type=template&id=bcb97534&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.number.constructor.js
 var es6_number_constructor = __webpack_require__("c5f6");
@@ -1661,7 +1661,7 @@ var isSupportGetBoundingClientRect = typeof document.documentElement.getBounding
     signleTapPending: function signleTapPending(e) {
       var _this4 = this;
 
-      if (e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.changedTouches[0].clientX - eventStartX) < 30 && Math.abs(e.changedTouches[0].clientY - eventStartY) < 30) {
+      if (e.timeStamp - eventTimeStamp <= 250 && Math.abs(e.changedTouches[0].clientX - eventStartX) < 10 && Math.abs(e.changedTouches[0].clientY - eventStartY) < 10) {
         // 滑动过程中的单击忽略掉
         if (this.transX === -clientW * activeIndex) {
           // 如果此定时器没有被双击操作 cancle掉，说明就是单击事件

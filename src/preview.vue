@@ -639,8 +639,8 @@ export default {
     // 判定是否是单击行为
     signleTapPending (e) {
       if (e.timeStamp - eventTimeStamp <= 250
-        && Math.abs(e.changedTouches[0].clientX - eventStartX) < 30
-        && Math.abs(e.changedTouches[0].clientY - eventStartY) < 30) {
+        && Math.abs(e.changedTouches[0].clientX - eventStartX) < 10
+        && Math.abs(e.changedTouches[0].clientY - eventStartY) < 10) {
         // 滑动过程中的单击忽略掉
         if (this.transX === -clientW * activeIndex) {
           // 如果此定时器没有被双击操作 cancle掉，说明就是单击事件
