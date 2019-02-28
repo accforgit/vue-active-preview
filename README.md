@@ -18,7 +18,7 @@
 
 - [vue-active-preview](https://github.com/accforgit/vue-active-preview) 与 [vue-active-swiper](https://github.com/accforgit/vue-active-swiper)结合使用的 [Live Demo](https://accforgit.github.io/vue-active-preview/swiper_preview.html)
 
-![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/E:\DEV\githubRes\vue-active-preview\public\swiper_preview.png)
+![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/swiper_preview.png)
 
 ## 安装
 
