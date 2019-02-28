@@ -14,7 +14,11 @@
 
 - [Basic Demo](https://accforgit.github.io/vue-active-preview/basic.html)
 
+![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/vue-active-preview.png)
+
 - [vue-active-preview](https://github.com/accforgit/vue-active-preview) && [vue-active-swiper](https://github.com/accforgit/vue-active-swiper) [Live Demo](https://accforgit.github.io/vue-active-preview/swiper_preview.html)
+
+![img](https://raw.githubusercontent.com/accforgit/vue-active-preview/master/public/E:\DEV\githubRes\vue-active-preview\public\swiper_preview.png.png)
 
 ## Install
 
